@@ -1,12 +1,8 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
+#include "oyun.hpp"
 
-int main()
-{
-   
-    std::cout << "main.cpp dosyasi acildi!" << std::endl;
 
-   
-
-    return 0;
-}
+int main() {
+    Oyun oyun;         
+    oyun.calistir();   // Oyunu başlatır ve döngüye sokar
+    
+    return 0; 
