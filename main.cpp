@@ -1,8 +1,8 @@
 #include "oyun.hpp"
 
-
 int main() {
     Oyun oyun;         
-    oyun.calistir();   // Oyunu başlatır ve döngüye sokar
+    oyun.calistir();   
     
     return 0; 
+}

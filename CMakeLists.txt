@@ -8,10 +8,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(SFML COMPONENTS Graphics Window System REQUIRED)
 
 # Executable oluştur
-add_executable(FlappyBird 
+add_executable(FlappyBird
     main.cpp
     bird.cpp
     oyun.cpp
+    pipe.cpp
 )
 
 # SFML'i linke et
