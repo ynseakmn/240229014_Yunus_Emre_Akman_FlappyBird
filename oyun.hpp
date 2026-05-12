@@ -4,31 +4,34 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <optional>
-#include <vector>    
-#include <cstdlib>  
-#include "bird.hpp" 
-#include "pipe.hpp"  
+#include <vector>    // Boruları bir listede tutmak için eklendi
+#include <cstdlib>   // Rastgele sayı üretmek (rand) için eklendi
+#include "bird.hpp"  // Kuş oyunda
+#include "pipe.hpp"  // Boru sınıfını oyuna dahil ettik
 
-// Main class
 class Oyun {
 private:
-    sf::RenderWindow pencere; // Ana ekran
-    Kus kus;                  // Ana karakteri
+    sf::RenderWindow pencere; // Oyunu oynadığımız ana ekran
+    Kus kus;                  // Oyunun ana karakteri
     
     std::vector<Pipe> borular; // Ekranda görünen tüm boruları tutan dinamik liste
     sf::Clock boruZamanlayici; // Yeni boru üretme süresini ölçecek saat
     
-    bool oyunBitti;           // Oyunun bitip bitmediğini takip eder.
-    int skor;                 // Oyuncunun skorunu tutar.
+    bool oyunBitti;           // Oyunun bitip bitmediğini takip eder
+    int skor;                 // Oyuncunun skorunu tutacak değişken
 
-    void olaylari_isle();     
-    void guncelle();          // Fiziği ve durumları hesaplar.
-    void ciz();               // Görüntüleri yansıtır.
-    void sifirla();           // Çarpınca oyunu baştan başlatır.
+    // İŞTE EKSİK OLAN KAHRAMANLARIMIZ BURADA:
+    sf::Font font;            // Yazı tipi dosyası
+    sf::Text skorYazisi;      // Ekranda görünecek skor metni
+
+    void olaylari_isle();     // Klavye ve fare tıklamaları
+    void guncelle();          // Fiziği ve durumları hesaplıyor
+    void ciz();               // Görüntüleri yansıtıyor
+    void sifirla();           // Çarpınca oyunu baştan başlatmak için
 
 public:
-    Oyun();                   
-    void calistir();          // Oyunun sonsuz döngüde çalışır.
+    Oyun();                   // Kurucu 
+    void calistir();          // Oyunun sonsuz döngüsünü açar
 }; 
 
 #endif

@@ -1,11 +1,22 @@
 #include "oyun.hpp"
 #include <ctime> 
 #include <iostream> // Skoru terminale yazdırır
+#include <string>   // Sayıları yazıya (string) çevirir
 
-// Kurucuda oyunBitti değişkenini false ve skoru 0 ile başlatır
-Oyun::Oyun() : pencere(sf::VideoMode({800, 600}), "Flappy Bird KOU"), oyunBitti(false), skor(0) {
+// SFML 3.0 ÇÖZÜMÜ: skorYazisi(font) eklenerek yazı oluşturulurken font peşinen verildi!
+Oyun::Oyun() : pencere(sf::VideoMode({800, 600}), "Flappy Bird KOU"), oyunBitti(false), skor(0), skorYazisi(font) {
     pencere.setFramerateLimit(60);
     srand(time(NULL)); // Rastgelelik sağlar
+
+    // YENİ: FONT VE YAZI AYARLARI
+    if (!font.openFromFile("font.ttf")) {
+        std::cout << "HATA: font.ttf dosyasi bulunamadi!" << std::endl;
+    }
+    
+    skorYazisi.setString("0");                  // Başlangıçta 0 yazsın
+    skorYazisi.setCharacterSize(50);            // Yazı boyutu
+    skorYazisi.setFillColor(sf::Color::White);  // Yazı rengi beyaz olsun
+    skorYazisi.setPosition({10.f, 10.f});       // Sol üst köşede dursun
 }
 
 // Oyunu sıfırlar
@@ -15,6 +26,7 @@ void Oyun::sifirla() {
     boruZamanlayici.restart(); // Zamanlayıcıyı baştan başlatır
     oyunBitti = false;         // Oyunu devam ettir
     skor = 0;                  // Oyun sıfırlandığında skor da sıfırlanır
+    skorYazisi.setString("0"); // Oyun sıfırlanınca ekrandaki yazı da sıfırlanır
 }
 
 void Oyun::calistir() {
@@ -70,7 +82,6 @@ void Oyun::guncelle() {
     for (size_t i = 0; i < borular.size(); i++) {
         borular[i].guncelle();
 
-        // SFML 3.0 Güncellemesi: intersects komutları findIntersection olarak değiştirildi
         if (kusKutusu.findIntersection(borular[i].getUstBounds()) || 
             kusKutusu.findIntersection(borular[i].getAltBounds())) {
             oyunBitti = true; // Çarptık!
@@ -79,6 +90,7 @@ void Oyun::guncelle() {
         if (!borular[i].isGecildi() && kusKutusu.position.x > borular[i].getUstBounds().position.x + borular[i].getUstBounds().size.x) {
             skor++; // Skoru 1 artırır
             borular[i].setGecildi(); // Boruyu "geçildi" olarak işaretler
+            skorYazisi.setString(std::to_string(skor)); // Skoru ekrandaki yazıya ata
             std::cout << "Guncel Skor: " << skor << std::endl; // Terminale yazar
         }
 
@@ -99,5 +111,6 @@ void Oyun::ciz() {
     }
 
     kus.ciz(pencere); 
+    pencere.draw(skorYazisi); // Skor yazısını ekrana çizer
     pencere.display();
 }
