@@ -16,21 +16,28 @@ Oyun::Oyun() : pencere(sf::VideoMode({800, 600}), "Flappy Bird KOU"), oyunBitti(
     } else {
         std::cout << "[DEBUG] Font basariyla yuklendi! Yazilar hazirlaniyor..." << std::endl;
         
-        // YENİ: FONT VE YAZI AYARLARI 
+        // FONT VE YAZI AYARLARI 
         skorYazisi.emplace(font);
         oyunBittiYazisi.emplace(font);
+        yenidenBaslaYazisi.emplace(font); // Alt metni hafızada oluşturur
 
-        // SKOR YAZISI AYARLARI
+        // SENİN SKOR YAZISI AYARLARIN (Kırmızı ve 50 punto)
         skorYazisi->setString("0");                  
         skorYazisi->setCharacterSize(50);            
         skorYazisi->setFillColor(sf::Color::Red);  
         skorYazisi->setPosition({10.f, 10.f});       
 
-        // OYUN BİTTİ YAZISI AYARLARI
+        // SENİN OYUN BİTTİ YAZISI AYARLARIN (Büyük ve Kırmızı)
         oyunBittiYazisi->setString("OYUN BITTI!");
         oyunBittiYazisi->setCharacterSize(100);
         oyunBittiYazisi->setFillColor(sf::Color::Red);
         oyunBittiYazisi->setPosition({200.f, 150.f}); 
+
+        // YENİDEN BAŞLA YAZISI AYARLARI
+        yenidenBaslaYazisi->setString("Yeniden baslamak icin Space'e basin");
+        yenidenBaslaYazisi->setCharacterSize(30);
+        yenidenBaslaYazisi->setFillColor(sf::Color::White); // Ekranda okunaklı olması için beyaz
+        yenidenBaslaYazisi->setPosition({210.f, 280.f}); // 100 puntoluk büyük yazının tam altına hizalar
         
         std::cout << "[DEBUG] Yazilar hazir! Oyun dongusune geciliyor." << std::endl;
     }
@@ -125,9 +132,10 @@ void Oyun::ciz() {
     kus.ciz(pencere); 
     if (skorYazisi) pencere.draw(*skorYazisi); 
 
-    // Eğer kuş çarptıysa (oyunBitti true ise) kırmızı yazıyı ekrana çizer!
-    if (oyunBitti && oyunBittiYazisi) {
-        pencere.draw(*oyunBittiYazisi);
+    // Eğer kuş çarptıysa yazıları ekrana çizer
+    if (oyunBitti) {
+        if (oyunBittiYazisi) pencere.draw(*oyunBittiYazisi);
+        if (yenidenBaslaYazisi) pencere.draw(*yenidenBaslaYazisi); // Alt talimat yazısını da çizer
     }
 
     pencere.display();

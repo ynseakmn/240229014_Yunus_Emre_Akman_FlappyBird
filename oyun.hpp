@@ -21,10 +21,9 @@ private:
     int skor;                 // Oyuncunun skorunu tutacak değişken
 
     sf::Font font;               // Yazı tipi dosyası
-    
-    // BURASI ÇOK ÖNEMLİ: std::optional eklendi
-    std::optional<sf::Text> skorYazisi;         // Ekranda görünecek skor metni
-    std::optional<sf::Text> oyunBittiYazisi;    // YENİ: Oyun bittiğinde çıkacak metin
+    std::optional<sf::Text> skorYazisi;         // Ekranda görünür
+    std::optional<sf::Text> oyunBittiYazisi;    // Oyun bittiğinde çıkar
+    std::optional<sf::Text> yenidenBaslaYazisi; // Yeniden başlama talimatı verir
 
     void olaylari_isle();     // Klavye ve fare tıklamaları
     void guncelle();          // Fiziği ve durumları hesaplıyor
