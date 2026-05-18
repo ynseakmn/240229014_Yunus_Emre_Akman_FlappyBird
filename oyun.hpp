@@ -20,9 +20,11 @@ private:
     bool oyunBitti;           // Oyunun bitip bitmediğini takip eder
     int skor;                 // Oyuncunun skorunu tutacak değişken
 
-    // İŞTE EKSİK OLAN KAHRAMANLARIMIZ BURADA:
-    sf::Font font;            // Yazı tipi dosyası
-    sf::Text skorYazisi;      // Ekranda görünecek skor metni
+    sf::Font font;               // Yazı tipi dosyası
+    
+    // BURASI ÇOK ÖNEMLİ: std::optional eklendi
+    std::optional<sf::Text> skorYazisi;         // Ekranda görünecek skor metni
+    std::optional<sf::Text> oyunBittiYazisi;    // YENİ: Oyun bittiğinde çıkacak metin
 
     void olaylari_isle();     // Klavye ve fare tıklamaları
     void guncelle();          // Fiziği ve durumları hesaplıyor

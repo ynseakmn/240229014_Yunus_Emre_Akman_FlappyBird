@@ -3,20 +3,37 @@
 #include <iostream> // Skoru terminale yazdırır
 #include <string>   // Sayıları yazıya (string) çevirir
 
-// SFML 3.0 ÇÖZÜMÜ: skorYazisi(font) eklenerek yazı oluşturulurken font peşinen verildi!
-Oyun::Oyun() : pencere(sf::VideoMode({800, 600}), "Flappy Bird KOU"), oyunBitti(false), skor(0), skorYazisi(font) {
+// Kurucuda oyunBitti değişkenini false ve skoru 0 ile başlatır
+Oyun::Oyun() : pencere(sf::VideoMode({800, 600}), "Flappy Bird KOU"), oyunBitti(false), skor(0) {
+    std::cout << "[DEBUG] Oyun baslatiliyor... Pencere acildi." << std::endl;
     pencere.setFramerateLimit(60);
     srand(time(NULL)); // Rastgelelik sağlar
 
-    // YENİ: FONT VE YAZI AYARLARI
-    if (!font.openFromFile("font.ttf")) {
-        std::cout << "HATA: font.ttf dosyasi bulunamadi!" << std::endl;
-    }
+    std::cout << "[DEBUG] Font yukleniyor..." << std::endl;
     
-    skorYazisi.setString("0");                  // Başlangıçta 0 yazsın
-    skorYazisi.setCharacterSize(50);            // Yazı boyutu
-    skorYazisi.setFillColor(sf::Color::White);  // Yazı rengi beyaz olsun
-    skorYazisi.setPosition({10.f, 10.f});       // Sol üst köşede dursun
+    if (!font.openFromFile("font.ttf")) {
+        std::cout << "HATA: font.ttf dosyasi bulunamadi! Klasoru kontrol et." << std::endl;
+    } else {
+        std::cout << "[DEBUG] Font basariyla yuklendi! Yazilar hazirlaniyor..." << std::endl;
+        
+        // YENİ: FONT VE YAZI AYARLARI 
+        skorYazisi.emplace(font);
+        oyunBittiYazisi.emplace(font);
+
+        // SKOR YAZISI AYARLARI
+        skorYazisi->setString("0");                  
+        skorYazisi->setCharacterSize(50);            
+        skorYazisi->setFillColor(sf::Color::Red);  
+        skorYazisi->setPosition({10.f, 10.f});       
+
+        // OYUN BİTTİ YAZISI AYARLARI
+        oyunBittiYazisi->setString("OYUN BITTI!");
+        oyunBittiYazisi->setCharacterSize(100);
+        oyunBittiYazisi->setFillColor(sf::Color::Red);
+        oyunBittiYazisi->setPosition({200.f, 150.f}); 
+        
+        std::cout << "[DEBUG] Yazilar hazir! Oyun dongusune geciliyor." << std::endl;
+    }
 }
 
 // Oyunu sıfırlar
@@ -26,7 +43,7 @@ void Oyun::sifirla() {
     boruZamanlayici.restart(); // Zamanlayıcıyı baştan başlatır
     oyunBitti = false;         // Oyunu devam ettir
     skor = 0;                  // Oyun sıfırlandığında skor da sıfırlanır
-    skorYazisi.setString("0"); // Oyun sıfırlanınca ekrandaki yazı da sıfırlanır
+    if (skorYazisi) skorYazisi->setString("0"); // Oyun sıfırlanınca ekrandaki yazı da sıfırlanır
 }
 
 void Oyun::calistir() {
@@ -69,13 +86,9 @@ void Oyun::guncelle() {
 
     
     if (boruZamanlayici.getElapsedTime().asSeconds() > 1.5f) {
-        // Üst borunun yüksekliği rastgele 100 ile 300 piksel arası
         float rastgeleY = (rand() % 200) + 100.f;
-        
-        // Ekranın en sağına (X=800), rastgele deliğe sahip ve boşluk boyutu 150 olan bir boru ekler
         borular.push_back(Pipe(800.f, rastgeleY, 150.f)); 
-        
-        boruZamanlayici.restart(); // Saati sıfırlar
+        boruZamanlayici.restart(); 
     }
 
     // Listedeki tüm boruları sola kaydırır
@@ -88,16 +101,15 @@ void Oyun::guncelle() {
         }
 
         if (!borular[i].isGecildi() && kusKutusu.position.x > borular[i].getUstBounds().position.x + borular[i].getUstBounds().size.x) {
-            skor++; // Skoru 1 artırır
-            borular[i].setGecildi(); // Boruyu "geçildi" olarak işaretler
-            skorYazisi.setString(std::to_string(skor)); // Skoru ekrandaki yazıya ata
-            std::cout << "Guncel Skor: " << skor << std::endl; // Terminale yazar
+            skor++; 
+            borular[i].setGecildi(); 
+            if (skorYazisi) skorYazisi->setString(std::to_string(skor)); 
+            std::cout << "Guncel Skor: " << skor << std::endl; 
         }
 
-        // Eğer boru ekranın solundan tamamen çıktıysa onu listeden siler
         if (borular[i].ekrandanCiktiMi()) {
             borular.erase(borular.begin() + i);
-            i--; // Listeden eleman sildiğimiz için sayacı bir geri alır
+            i--; 
         }
     }
 }
@@ -111,6 +123,12 @@ void Oyun::ciz() {
     }
 
     kus.ciz(pencere); 
-    pencere.draw(skorYazisi); // Skor yazısını ekrana çizer
+    if (skorYazisi) pencere.draw(*skorYazisi); 
+
+    // Eğer kuş çarptıysa (oyunBitti true ise) kırmızı yazıyı ekrana çizer!
+    if (oyunBitti && oyunBittiYazisi) {
+        pencere.draw(*oyunBittiYazisi);
+    }
+
     pencere.display();
 }
